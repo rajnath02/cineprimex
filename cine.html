@@ -1,0 +1,930 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CinePrimex - Movies & Entertainment</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#080808;color:white;font-family:Arial,sans-serif}
+button{cursor:pointer;border:0}
+
+header{
+height:62px;background:#111;display:flex;
+align-items:center;justify-content:space-between;padding:0 14px
+}
+
+/* CINEPRIMEX TEXT LOGO */
+.logo{
+display:inline-flex;align-items:center;
+font-family:Georgia,"Times New Roman",serif;
+font-size:26px;font-weight:900;letter-spacing:3px;
+white-space:nowrap;line-height:1;text-transform:uppercase
+}
+.logo-cine{color:#fff;text-shadow:0 0 8px rgba(255,255,255,.22)}
+.logo-prime{
+background:linear-gradient(180deg,#fff1ad 0%,#f5bd24 48%,#b87908 100%);
+-webkit-background-clip:text;background-clip:text;
+color:transparent;font-style:italic
+}
+
+.menu-btn{background:none;color:white;font-size:27px}
+.gold-btn,.submit-btn,.download-btn{
+background:#f5bd24;color:#111;padding:10px 15px;
+border-radius:5px;font-weight:bold
+}
+
+.hero{
+height:220px;overflow:hidden;padding:6px 0;
+display:flex;flex-direction:column;gap:5px;background:#101010
+}
+.poster-track{
+display:flex;gap:7px;width:max-content;
+height:calc((100% - 10px)/3);
+animation:left 18s linear infinite
+}
+.poster-track:nth-child(2){animation-name:right;animation-duration:18s}
+.poster-track:nth-child(3){animation-duration:18s}
+.poster{height:100%;width:85px;flex:none;border-radius:4px;overflow:hidden;background:#252525}
+.poster img{height:100%;width:100%;object-fit:cover}
+@keyframes left{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes right{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+
+.search-area{
+display:flex;gap:8px;padding:10px;background:#141414;align-items:center
+}
+.search-area input{
+flex:1;min-width:0;padding:11px;border:1px solid #555;border-radius:5px
+}
+
+.container{max-width:1200px;margin:auto;padding:15px}
+.notice{
+background:#171717;border:1px solid #37302a;padding:13px;
+border-radius:7px;text-align:center;color:#ddd;line-height:1.5;margin:10px 0
+}
+.notice strong{color:#f5bd24}
+.intro{text-align:center;padding:18px 8px}
+.intro h1{font-size:23px;margin-bottom:10px}
+.intro p{color:#bbb;line-height:1.6;margin:8px auto}
+.section-title{
+font-size:20px;background:#171717;padding:12px;
+border-radius:5px;margin:16px 0
+}
+
+.categories{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0 18px}
+.category{
+background:#1b1b1b;color:#ddd;border:1px solid #383838;
+padding:8px 10px;border-radius:5px;font-size:12px
+}
+.category.active,.category:hover{background:#f5bd24;color:#111}
+
+.movie-grid{
+display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:12px
+}
+.movie-card{
+background:#151515;border:1px solid #292929;
+border-radius:6px;overflow:hidden;cursor:pointer;transition:.2s
+}
+.movie-card:hover{border-color:#f5bd24;transform:translateY(-3px)}
+.movie-card img{
+width:100%;height:195px;object-fit:cover;background:#222
+}
+.movie-card h3{font-size:14px;padding:9px;line-height:1.4}
+.empty-message{
+color:#aaa;padding:35px 15px;text-align:center;
+background:#151515;border:1px dashed #444;border-radius:6px;
+grid-column:1/-1;line-height:1.6
+}
+
+.pagination{
+display:flex;justify-content:center;align-items:center;
+flex-wrap:wrap;gap:5px;margin:25px auto 10px
+}
+.page-btn{
+background:#252525;color:#fff;border:1px solid #444;
+border-radius:5px;min-width:34px;height:36px;padding:0 8px;
+font-size:13px;font-weight:bold
+}
+.page-btn.active{background:#1976e8;border-color:#1976e8}
+.page-btn:hover:not(:disabled){background:#1766c9}
+.page-btn:disabled{opacity:.4;cursor:not-allowed}
+.page-dots{color:#aaa;padding:0 3px}
+.page-count{text-align:center;color:#999;font-size:12px;margin:10px 0 25px}
+
+.page{display:none;min-height:300px;padding:18px 0}
+.page.active{display:block}
+.page h2{color:#f5bd24;margin-bottom:14px}
+.page p{color:#ccc;line-height:1.7;margin:9px 0}
+
+.form-box{
+max-width:600px;margin:18px auto;background:#151515;
+border:1px solid #333;padding:18px;border-radius:8px
+}
+.form-box label{display:block;margin:12px 0 6px;color:#ddd}
+.form-box input,.form-box select,.form-box textarea{
+width:100%;padding:11px;background:#222;color:white;
+border:1px solid #444;border-radius:5px
+}
+.form-box textarea{min-height:85px}
+.submit-btn{margin-top:13px}
+.message{margin-top:10px;color:#f5bd24}
+
+.overlay{
+display:none;position:fixed;inset:0;background:#0009;z-index:40
+}
+.overlay.show{display:block}
+.drawer{
+position:fixed;top:0;left:-310px;width:min(290px,82vw);
+height:100vh;overflow-y:auto;background:#303030;z-index:41;
+transition:left .28s ease;box-shadow:5px 0 20px #0005
+}
+.drawer.open{left:0}
+.drawer-search{padding:22px 15px 18px}
+.drawer-search input{
+width:100%;padding:15px;background:white;color:#222;
+border:0;border-radius:5px;font-size:16px
+}
+.drawer-link,.drop-toggle{
+display:block;width:100%;text-align:left;padding:16px 20px;
+background:transparent;color:#f4f4f4;font-size:15px;
+border-bottom:1px solid #444
+}
+.drawer-link:hover,.drop-toggle:hover{background:#3b3b3b;color:#f5bd24}
+.drop-toggle{display:flex;justify-content:space-between}
+.submenu{display:none;background:#414141}
+.submenu.open{display:block}
+.submenu button{
+display:block;width:100%;text-align:left;padding:14px;
+background:transparent;color:#ddd;font-size:14px
+}
+
+.movie-details{max-width:850px;margin:auto}
+.back-btn{
+background:#292929;color:white;padding:10px 15px;
+border-radius:5px;margin-bottom:18px
+}
+.detail-poster{
+width:150px;max-width:40%;border-radius:7px;
+float:left;margin:0 17px 12px 0
+}
+.detail-info{min-height:180px}
+.detail-info h2{font-size:24px;color:#f5bd24;margin-bottom:10px}
+.video-player{
+clear:both;width:100%;margin-top:20px;background:#000;
+border-radius:7px;max-height:480px
+}
+.video-player video{
+width:100%;max-height:480px;display:block;
+border-radius:7px;background:#000
+}
+.detail-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
+.download-btn{text-decoration:none;display:inline-block}
+.video-message{
+color:#aaa;padding:15px;background:#151515;
+border-radius:5px;margin-top:15px
+}
+.admin-movie{
+display:flex;justify-content:space-between;align-items:center;
+gap:10px;padding:10px;background:#222;margin:8px 0;border-radius:5px
+}
+.delete-btn{background:#c62828;color:white;padding:8px 12px;border-radius:4px}
+
+/* FOOTER - MIDDLE GAP REMOVED */
+.site-footer{
+background:#101010;padding:12px 8px 14px;
+margin-top:20px;text-align:center;border-top:1px solid #292929
+}
+.footer-copyright{
+color:#eee;font-size:clamp(14px,3vw,20px);margin-bottom:8px
+}
+.footer-copyright strong{color:#f5bd24}
+
+.footer-links{
+max-width:850px;
+margin:auto;
+display:grid;
+grid-template-columns:1fr 1fr;
+justify-items:center;
+column-gap:0;
+row-gap:2px;
+}
+
+.footer-link{
+display:flex;
+align-items:center;
+justify-content:center;
+gap:4px;
+color:#f5f5f5;
+text-decoration:none;
+font-size:clamp(13px,3vw,20px);
+font-weight:bold;
+white-space:nowrap;
+padding:2px;
+}
+.footer-link:hover{color:#f5bd24}
+.footer-icon{color:#f5bd24;font-size:20px}
+
+@media(max-width:480px){
+header{height:60px;padding:0 10px}
+.logo{font-size:17px;letter-spacing:1.5px}
+.hero{height:210px}
+.poster{width:82px}
+.movie-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.movie-card img{height:180px}
+.intro h1{font-size:20px}
+.search-area{padding:8px}
+.footer-copyright{font-size:13px;margin-bottom:6px}
+.footer-links{column-gap:0;row-gap:2px}
+.footer-link{font-size:12px;gap:3px;padding:1px}
+.footer-icon{font-size:17px}
+.detail-poster{width:115px}
+.page-btn{min-width:32px;padding:0 7px}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<button class="menu-btn" onclick="openTopMenu()">☰</button>
+
+<div class="logo">
+<span class="logo-cine">CINE</span><span class="logo-prime">PRIMEX</span>
+</div>
+
+<button class="gold-btn" onclick="showPage('home')">HOME</button>
+</header>
+
+<div class="overlay" id="topOverlay" onclick="closeTopMenu()"></div>
+<div class="overlay" id="bottomOverlay" onclick="closeBottomMenu()"></div>
+
+<!-- TOP MENU - NO SEARCH BOX -->
+<nav class="drawer" id="topDrawer">
+<button class="drawer-link" onclick="showPage('admin')">♟ Admin Login</button>
+<button class="drawer-link" onclick="showPage('disclaimer')">ⓘ Disclaimer</button>
+<button class="drawer-link" onclick="joinGroup()">➤ Join Our Group</button>
+<button class="drawer-link" onclick="showPage('download')">⬇ How To Download?</button>
+<button class="drawer-link" onclick="showPage('request')">✉ Movie Request Page</button>
+</nav>
+
+<!-- BOTTOM MENU -->
+<nav class="drawer" id="bottomDrawer">
+<div class="drawer-search">
+<input type="search" id="sideSearch" placeholder="Search here..." oninput="sideSearchMovies()">
+</div>
+
+<button class="drawer-link" onclick="selectMenuCategory('All Movies')">CinePrimex Home 🏠</button>
+<button class="drawer-link" onclick="selectMenuCategory('Bollywood Hindi Movies')">Bollywood</button>
+<button class="drawer-link" onclick="selectMenuCategory('Hollywood Hindi Movies')">Hollywood</button>
+<button class="drawer-link" onclick="selectMenuCategory('HQ Dubbed Movies UnCut')">Hindi Dubbed</button>
+<button class="drawer-link" onclick="selectMenuCategory('South Hindi Dubbed Movie')">South Hindi</button>
+<button class="drawer-link" onclick="selectMenuCategory('Web Series')">Web Series</button>
+
+<button class="drop-toggle" onclick="toggleSubmenu('genresMenu')">GENRES <span>▾</span></button>
+<div class="submenu" id="genresMenu">
+<button onclick="selectMenuCategory('Animation Movies')">Animation Movies</button>
+<button onclick="selectMenuCategory('IMDb Top Movies')">IMDb Top Movies</button>
+<button onclick="selectMenuCategory('Japanese Anime')">Japanese Anime</button>
+<button onclick="selectMenuCategory('Marvel Hollywood Movies')">Marvel Hollywood Movies</button>
+<button onclick="selectMenuCategory('Punjabi Movies')">Punjabi Movies</button>
+</div>
+
+<button class="drop-toggle" onclick="toggleSubmenu('moreMenu')">More <span>▾</span></button>
+<div class="submenu" id="moreMenu">
+<button onclick="selectMenuCategory('HQ Dubbed Movies UnCut')">HQ Dubbed Movies UnCut</button>
+<button onclick="selectMenuCategory('HQ Hindi Dub Movie With ads')">HQ Hindi Dub Movie With ads</button>
+<button onclick="selectMenuCategory('South Hindi Dubbed Movie')">South Hindi Dubbed Movie</button>
+<button onclick="selectMenuCategory('Web Series')">Web Series</button>
+</div>
+</nav>
+
+<section class="hero">
+<div class="poster-track" id="bollywood"></div>
+<div class="poster-track" id="south"></div>
+<div class="poster-track" id="hollywood"></div>
+</section>
+
+<div class="search-area">
+<button class="menu-btn" onclick="openBottomMenu()">☰</button>
+<input type="search" id="search" placeholder="Search movies..." oninput="currentPage=1;renderMovies()">
+<button class="gold-btn" onclick="document.getElementById('search').focus()">SEARCH</button>
+</div>
+
+<main class="container">
+
+<section class="page active" id="home">
+<div class="notice"><strong>Welcome to CinePrimex</strong><br>Movies • Entertainment • Trailers</div>
+
+<div class="intro">
+<h1>CinePrimex – Movies & Entertainment</h1>
+<p>Explore Bollywood, South Indian and Hollywood movie information, trailers and entertainment updates.</p>
+</div>
+
+<h2 class="section-title">▣ Select Category</h2>
+<div class="categories" id="categories"></div>
+
+<h2 class="section-title">🔥 Latest Releases</h2>
+<div class="movie-grid" id="movieGrid"></div>
+<div class="pagination" id="pagination"></div>
+<div class="page-count" id="pageCount"></div>
+</section>
+
+<section class="page" id="movieDetails">
+<div class="movie-details">
+<button class="back-btn" onclick="showPage('home')">← Back to Movies</button>
+<div id="movieDetailContent"></div>
+</div>
+</section>
+
+<section class="page" id="admin">
+<h2>♟ Admin Login</h2>
+<div class="form-box">
+<form onsubmit="adminLogin(event)">
+<label>Email</label>
+<input type="email" id="adminEmail" required>
+<label>Password</label>
+<input type="password" id="adminPassword" required>
+<button class="submit-btn">Login</button>
+<p class="message" id="adminMessage"></p>
+</form>
+
+<div id="adminPanel" style="display:none">
+<h2>Admin Dashboard</h2>
+<label>Movie Title</label>
+<input id="newTitle" placeholder="Enter movie title">
+
+<label>Category</label>
+<select id="newCategory"></select>
+
+<label>Poster Image URL (Optional)</label>
+<input id="newPoster" type="url" placeholder="Poster image URL">
+
+<label>Video URL</label>
+<input id="newVideoUrl" type="url" placeholder="Authorised video URL">
+
+<button class="submit-btn" onclick="addMovie()">Add Movie</button>
+<p class="message" id="addMovieMessage"></p>
+
+<hr style="border-color:#444;margin:20px 0">
+<h2>Manage Movies</h2>
+<div id="adminMovieList"></div>
+<button class="submit-btn" onclick="adminLogout()">Logout</button>
+</div>
+</div>
+<button class="submit-btn" onclick="showPage('home')">Back to Home</button>
+</section>
+
+<section class="page" id="disclaimer">
+<h2>Disclaimer</h2>
+<p>CinePrimex is intended for movie information, entertainment updates and authorised trailer content.</p>
+<p>We do not claim ownership of third-party trademarks, posters, images or videos. Their respective owners retain their rights.</p>
+<p>Users should only upload or share content that they own or have permission to use.</p>
+<button class="submit-btn" onclick="showPage('home')">Back to Home</button>
+</section>
+
+<section class="page" id="download">
+<h2>⬇ How To Download?</h2>
+<p>1. Browse the movies in Latest Releases.</p>
+<p>2. Select a movie to open its details page.</p>
+<p>3. If a video is available, use the video player to watch it.</p>
+<p>4. Use the download link if the video host permits downloading.</p>
+<button class="submit-btn" onclick="showPage('home')">Back to Home</button>
+</section>
+
+<section class="page" id="request">
+<h2>🎬 Movie Request Page</h2>
+<p>Can't find a movie? Send us your request below.</p>
+
+<div class="form-box">
+<form id="requestForm">
+<label>Movie Name</label>
+<input id="requestTitle" required>
+
+<label>Preferred Language</label>
+<select id="requestLanguage" required>
+<option value="">Select language</option>
+<option>Hindi</option>
+<option>English</option>
+<option>Bengali</option>
+<option>Tamil</option>
+<option>Telugu</option>
+<option>Malayalam</option>
+<option>Other</option>
+</select>
+
+<label>Release Year</label>
+<input id="requestYear" type="number" placeholder="e.g. 2025">
+
+<label>Additional Details</label>
+<textarea id="requestNote"></textarea>
+
+<button class="submit-btn">Submit Request</button>
+<p class="message" id="requestMessage"></p>
+</form>
+</div>
+
+<button class="submit-btn" onclick="showPage('home')">Back to Home</button>
+</section>
+
+</main>
+
+<footer class="site-footer">
+<div class="footer-copyright">2026 © <strong>CinePrimex</strong> | All Rights Reserved.</div>
+
+<div class="footer-links">
+<a class="footer-link" href="#" onclick="showPage('disclaimer');return false">
+<span class="footer-icon">ⓘ</span> Disclaimer
+</a>
+
+<a class="footer-link" href="https://t.me/+SxnwjTUMqEM4YzU1" target="_blank" rel="noopener noreferrer">
+<span class="footer-icon">➤</span> Join Our Group !
+</a>
+
+<a class="footer-link" href="#" onclick="showPage('download');return false">
+<span class="footer-icon">⬇</span> How To Download ?
+</a>
+
+<a class="footer-link" href="#" onclick="showPage('request');return false">
+<span class="footer-icon">✉</span> Movie Request Page
+</a>
+</div>
+</footer>
+
+<script>
+const GROUP_URL="https://t.me/+SxnwjTUMqEM4YzU1";
+const PAGE_SIZE=20;
+
+let currentPage=1;
+let activeCategory="All Movies";
+let isAdmin=false;
+
+const categories=[
+"All Movies","Animation Movies","Bollywood Hindi Movies",
+"Hollywood Hindi Movies","HQ Dubbed Movies UnCut",
+"HQ Hindi Dub Movie With ads","IMDb Top Movies","Japanese Anime",
+"Marvel Hollywood Movies","Punjabi Movies",
+"South Hindi Dubbed Movie","Web Series"
+];
+
+if(!localStorage.getItem("cinePrimexLatestReset_v1")){
+localStorage.setItem("cinePrimexMovies","[]");
+localStorage.setItem("cinePrimexLatestReset_v1","done");
+}
+
+function loadMovies(){
+try{
+const saved=JSON.parse(localStorage.getItem("cinePrimexMovies")||"[]");
+if(Array.isArray(saved))return saved.map((m,i)=>({...m,id:m.id||"saved-"+i}));
+}catch(e){}
+return [];
+}
+
+let movies=loadMovies();
+
+function saveMovies(){
+try{
+localStorage.setItem("cinePrimexMovies",JSON.stringify(movies));
+}catch(e){
+alert("Unable to save movies in this browser.");
+}
+}
+
+const rows={
+bollywood:[
+["Jawan","jFt1gS4BGHlK8xt76Y81Alp4dbt.jpg"],
+["Pathaan","arf00BkwvXo0CFKbaD9OpqdE4Nu.jpg"],
+["3 Idiots","66A9MqXOyVFCssoloscw79z8Tew.jpg"],
+["Jawan","jFt1gS4BGHlK8xt76Y81Alp4dbt.jpg"],
+["Pathaan","arf00BkwvXo0CFKbaD9OpqdE4Nu.jpg"]
+],
+south:[
+["Baahubali","9BAjt8nSSms62uOVYn1t3C3dVto.jpg"],
+["Kalki","6izwz7rsy95ARzTR3poZ8H6c5pp.jpg"],
+["KGF Chapter 2","bQ2ywkchIiaKLSEaMrcT6e29f91.jpg"],
+["Baahubali","9BAjt8nSSms62uOVYn1t3C3dVto.jpg"],
+["Kalki","6izwz7rsy95ARzTR3poZ8H6c5pp.jpg"],
+["KGF Chapter 2","bQ2ywkchIiaKLSEaMrcT6e29f91.jpg"]
+],
+hollywood:[
+["Oppenheimer","ptpr0kGAckfQkJeJIt8st5dglvd.jpg"],
+["Dune","d5NXSklXo0qyIYkgV94XAgMIckC.jpg"],
+["Interstellar","gEU2QniE6E77NI6lCU6MxlNBvIx.jpg"],
+["Avatar","t6HIqrRAclMCA60NsSmeqe9RmNV.jpg"],
+["Spider-Man","1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg"]
+]
+};
+
+function makeRow(id,list){
+const track=document.getElementById(id);
+[...list,...list].forEach(([title,path])=>{
+const card=document.createElement("div");
+card.className="poster";
+const img=document.createElement("img");
+img.src="https://image.tmdb.org/t/p/w500/"+path;
+img.alt=title;
+card.appendChild(img);
+track.appendChild(card);
+});
+}
+
+makeRow("bollywood",rows.bollywood);
+makeRow("south",rows.south);
+makeRow("hollywood",rows.hollywood);
+
+function renderCategories(){
+const box=document.getElementById("categories");
+box.innerHTML="";
+categories.forEach(cat=>{
+const b=document.createElement("button");
+b.className="category"+(activeCategory===cat?" active":"");
+b.textContent=cat;
+b.onclick=()=>{
+activeCategory=cat;
+currentPage=1;
+renderCategories();
+renderMovies();
+};
+box.appendChild(b);
+});
+}
+
+function getFilteredMovies(){
+const term=document.getElementById("search").value.toLowerCase().trim();
+return movies.filter(m=>
+(activeCategory==="All Movies"||m.category===activeCategory)&&
+((m.title||"").toLowerCase().includes(term))
+);
+}
+
+function renderMovies(){
+const grid=document.getElementById("movieGrid");
+const filtered=getFilteredMovies();
+const totalPages=Math.max(1,Math.ceil(filtered.length/PAGE_SIZE));
+
+currentPage=Math.max(1,Math.min(totalPages,currentPage));
+const start=(currentPage-1)*PAGE_SIZE;
+const visible=filtered.slice(start,start+PAGE_SIZE);
+
+grid.innerHTML="";
+
+if(!visible.length){
+grid.innerHTML='<div class="empty-message">No movies available yet.<br>New releases will appear here when added by Admin.</div>';
+}else{
+visible.forEach(movie=>{
+const card=document.createElement("div");
+card.className="movie-card";
+
+if(movie.poster){
+const img=document.createElement("img");
+img.src=movie.poster;
+img.alt=movie.title;
+img.onerror=()=>{img.style.display="none"};
+card.appendChild(img);
+}else{
+const placeholder=document.createElement("div");
+placeholder.style.cssText="height:195px;display:flex;align-items:center;justify-content:center;color:#aaa;background:#222;text-align:center;padding:10px";
+placeholder.textContent="No Poster";
+card.appendChild(placeholder);
+}
+
+const h=document.createElement("h3");
+h.textContent=movie.title;
+card.appendChild(h);
+card.onclick=()=>openMovie(movie.id);
+grid.appendChild(card);
+});
+}
+
+renderPagination(totalPages,filtered.length);
+}
+
+function renderPagination(totalPages,totalMovies){
+const box=document.getElementById("pagination");
+box.innerHTML="";
+const count=document.getElementById("pageCount");
+
+if(totalMovies===0){
+count.textContent="";
+return;
+}
+
+function addButton(label,page,active=false,disabled=false){
+const b=document.createElement("button");
+b.className="page-btn"+(active?" active":"");
+b.textContent=label;
+b.disabled=disabled;
+b.onclick=()=>{
+currentPage=page;
+renderMovies();
+document.getElementById("home").scrollIntoView({behavior:"smooth",block:"start"});
+};
+box.appendChild(b);
+}
+
+function addDots(){
+const dots=document.createElement("span");
+dots.className="page-dots";
+dots.textContent="...";
+box.appendChild(dots);
+}
+
+addButton("Previous",Math.max(1,currentPage-1),false,currentPage===1);
+
+if(totalPages<=7){
+for(let i=1;i<=totalPages;i++)addButton(i,i,currentPage===i);
+}else if(currentPage<=3){
+for(let i=1;i<=3;i++)addButton(i,i,currentPage===i);
+addDots();
+addButton(totalPages,totalPages);
+}else if(currentPage>=totalPages-2){
+addButton(1,1);
+addDots();
+for(let i=totalPages-2;i<=totalPages;i++)addButton(i,i,currentPage===i);
+}else{
+addButton(1,1);
+addDots();
+for(let i=currentPage-1;i<=currentPage+1;i++)addButton(i,i,currentPage===i);
+addDots();
+addButton(totalPages,totalPages);
+}
+
+addButton("Next",Math.min(totalPages,currentPage+1),false,currentPage===totalPages);
+
+count.textContent="Page "+currentPage+" of "+totalPages+" | Showing "+
+Math.min(PAGE_SIZE,totalMovies-(currentPage-1)*PAGE_SIZE)+
+" of "+totalMovies+" movies";
+}
+
+function showPage(id){
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+const page=document.getElementById(id);
+if(page)page.classList.add("active");
+closeTopMenu();
+closeBottomMenu();
+window.scrollTo(0,0);
+}
+
+function openMovie(id){
+const movie=movies.find(m=>m.id===id);
+if(!movie)return;
+
+const box=document.getElementById("movieDetailContent");
+box.innerHTML="";
+
+if(movie.poster){
+const poster=document.createElement("img");
+poster.className="detail-poster";
+poster.src=movie.poster;
+poster.alt=movie.title||"Movie poster";
+poster.onerror=()=>poster.style.display="none";
+box.appendChild(poster);
+}
+
+const info=document.createElement("div");
+info.className="detail-info";
+
+const title=document.createElement("h2");
+title.textContent=movie.title||"Untitled";
+
+const category=document.createElement("p");
+category.textContent="Category: "+(movie.category||"Not specified");
+
+const description=document.createElement("p");
+description.textContent=movie.description||"Movie information and entertainment details.";
+
+info.append(title,category,description);
+box.appendChild(info);
+
+if(movie.videoUrl){
+const player=document.createElement("div");
+player.className="video-player";
+
+const video=document.createElement("video");
+video.controls=true;
+video.preload="metadata";
+video.src=movie.videoUrl;
+
+player.appendChild(video);
+box.appendChild(player);
+
+const actions=document.createElement("div");
+actions.className="detail-actions";
+
+const link=document.createElement("a");
+link.className="download-btn";
+link.href=movie.videoUrl;
+link.target="_blank";
+link.rel="noopener noreferrer";
+link.textContent="Open Video / Download";
+
+actions.appendChild(link);
+box.appendChild(actions);
+}else{
+const msg=document.createElement("div");
+msg.className="video-message";
+msg.textContent="No video is currently available for this movie.";
+box.appendChild(msg);
+}
+
+showPage("movieDetails");
+}
+
+function openTopMenu(){
+document.getElementById("topDrawer").classList.add("open");
+document.getElementById("topOverlay").classList.add("show");
+}
+function closeTopMenu(){
+document.getElementById("topDrawer").classList.remove("open");
+document.getElementById("topOverlay").classList.remove("show");
+}
+function openBottomMenu(){
+document.getElementById("bottomDrawer").classList.add("open");
+document.getElementById("bottomOverlay").classList.add("show");
+}
+function closeBottomMenu(){
+document.getElementById("bottomDrawer").classList.remove("open");
+document.getElementById("bottomOverlay").classList.remove("show");
+}
+function toggleSubmenu(id){
+document.getElementById(id).classList.toggle("open");
+}
+function joinGroup(){
+window.open(GROUP_URL,"_blank","noopener,noreferrer");
+closeTopMenu();
+}
+function selectMenuCategory(category){
+activeCategory=category;
+currentPage=1;
+document.getElementById("search").value="";
+renderCategories();
+renderMovies();
+showPage("home");
+}
+function sideSearchMovies(){
+const value=document.getElementById("sideSearch").value;
+document.getElementById("search").value=value;
+activeCategory="All Movies";
+currentPage=1;
+renderCategories();
+renderMovies();
+showPage("home");
+}
+
+function adminLogin(event){
+event.preventDefault();
+
+const email=document.getElementById("adminEmail").value.trim();
+const password=document.getElementById("adminPassword").value;
+
+if(email==="admin@example.com"&&password==="ChangeThisDemoPassword"){
+isAdmin=true;
+document.getElementById("adminMessage").textContent="Login successful.";
+document.getElementById("adminPanel").style.display="block";
+renderAdminMovies();
+}else{
+document.getElementById("adminMessage").textContent="Invalid email or password.";
+}
+}
+
+function adminLogout(){
+isAdmin=false;
+document.getElementById("adminPanel").style.display="none";
+document.getElementById("adminEmail").value="";
+document.getElementById("adminPassword").value="";
+document.getElementById("adminMessage").textContent="You have logged out.";
+}
+
+function addMovie(){
+if(!isAdmin){
+alert("Please log in first.");
+return;
+}
+
+const title=document.getElementById("newTitle").value.trim();
+const category=document.getElementById("newCategory").value;
+const poster=document.getElementById("newPoster").value.trim();
+const videoUrl=document.getElementById("newVideoUrl").value.trim();
+
+if(!title||!category||!videoUrl){
+document.getElementById("addMovieMessage").textContent="Enter a title, category and video URL.";
+return;
+}
+
+try{
+new URL(videoUrl);
+if(poster)new URL(poster);
+}catch(e){
+document.getElementById("addMovieMessage").textContent="Please enter valid video and poster URLs.";
+return;
+}
+
+movies.unshift({
+id:"movie-"+Date.now()+"-"+Math.random().toString(36).slice(2,7),
+title,
+category,
+poster,
+videoUrl,
+description:"",
+addedAt:new Date().toISOString()
+});
+
+saveMovies();
+
+document.getElementById("newTitle").value="";
+document.getElementById("newPoster").value="";
+document.getElementById("newVideoUrl").value="";
+document.getElementById("addMovieMessage").textContent="Movie added successfully.";
+
+activeCategory="All Movies";
+document.getElementById("search").value="";
+currentPage=1;
+
+renderCategories();
+renderMovies();
+renderAdminMovies();
+}
+
+function renderAdminMovies(){
+const box=document.getElementById("adminMovieList");
+box.innerHTML="";
+if(!isAdmin)return;
+
+if(!movies.length){
+box.textContent="No movies added yet.";
+return;
+}
+
+movies.forEach(movie=>{
+const row=document.createElement("div");
+row.className="admin-movie";
+
+const name=document.createElement("span");
+name.textContent=movie.title+" — "+movie.category;
+
+const del=document.createElement("button");
+del.className="delete-btn";
+del.textContent="Delete";
+del.onclick=()=>deleteMovie(movie.id);
+
+row.append(name,del);
+box.appendChild(row);
+});
+}
+
+function deleteMovie(id){
+if(!isAdmin)return;
+if(!confirm("Delete this movie?"))return;
+
+movies=movies.filter(movie=>movie.id!==id);
+saveMovies();
+renderMovies();
+renderAdminMovies();
+}
+
+document.getElementById("requestForm").addEventListener("submit",function(event){
+event.preventDefault();
+
+const request={
+title:document.getElementById("requestTitle").value.trim(),
+language:document.getElementById("requestLanguage").value,
+year:document.getElementById("requestYear").value,
+note:document.getElementById("requestNote").value.trim(),
+date:new Date().toISOString()
+};
+
+try{
+const saved=JSON.parse(localStorage.getItem("cinePrimexRequests")||"[]");
+saved.push(request);
+localStorage.setItem("cinePrimexRequests",JSON.stringify(saved));
+
+document.getElementById("requestMessage").textContent=
+"Request saved in this browser. It has not been sent to the website owner.";
+
+this.reset();
+}catch(e){
+document.getElementById("requestMessage").textContent=
+"Could not save the request in this browser.";
+}
+});
+
+function setupAdminCategories(){
+const select=document.getElementById("newCategory");
+select.innerHTML="";
+
+categories.filter(cat=>cat!=="All Movies").forEach(cat=>{
+const option=document.createElement("option");
+option.value=cat;
+option.textContent=cat;
+select.appendChild(option);
+});
+}
+
+renderCategories();
+setupAdminCategories();
+renderMovies();
+</script>
+
+</body>
+</html>
